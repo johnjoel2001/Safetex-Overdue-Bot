@@ -14,14 +14,14 @@ IST = pytz.timezone("Asia/Kolkata")
 def main():
     app = ApplicationBuilder().token(OVERDUE_BOT_TOKEN).build()
 
-    # Schedule daily overdue report at 9:00 AM IST
+    # Schedule daily overdue report at 11:45 AM IST (TEST)
     app.job_queue.run_daily(
         send_overdue_report,
-        time=time(9, 0, 0, tzinfo=IST),
+        time=time(11, 45, 0, tzinfo=IST),
     )
 
     print("📊 Overdue report bot is running...")
-    print("⏰ Report scheduled daily at 9:00 AM IST")
+    print("⏰ Report scheduled daily at 11:45 AM IST (TEST)")
     app.run_polling()
 
 

@@ -18,11 +18,11 @@ def job():
 
 def main():
     scheduler = BackgroundScheduler(timezone=IST)
-    scheduler.add_job(job, "cron", hour=9, minute=0)
+    scheduler.add_job(job, "cron", hour=11, minute=45)
     scheduler.start()
 
     print("📊 WhatsApp overdue report bot is running...")
-    print("⏰ Report scheduled daily at 9:00 AM IST")
+    print("⏰ Report scheduled daily at 11:45 AM IST (TEST)")
 
     # Run once immediately if requested
     if os.getenv("WHATSAPP_RUN_NOW", "0") == "1":
