@@ -1,8 +1,8 @@
 import os
-import time
-import schedule
+from datetime import time
 import pytz
 from dotenv import load_dotenv
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from whatsapp_report import send_whatsapp_report
 
@@ -17,7 +17,9 @@ def job():
 
 
 def main():
-    schedule.every().day.at("09:00").do(job)
+    scheduler = BackgroundScheduler(timezone=IST)
+    scheduler.add_job(job, "cron", hour=9, minute=0)
+    scheduler.start()
 
     print("📊 WhatsApp overdue report bot is running...")
     print("⏰ Report scheduled daily at 9:00 AM IST")
@@ -27,9 +29,12 @@ def main():
         print("🏃 Running once now (WHATSAPP_RUN_NOW=1)...")
         job()
 
-    while True:
-        schedule.run_pending()
-        time.sleep(30)
+    try:
+        while True:
+            import time as _time
+            _time.sleep(60)
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()
 
 
 if __name__ == "__main__":
