@@ -8,8 +8,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GREEN_API_BASE = "https://api.green-api.com"
-
 
 def main():
     instance_id = os.getenv("GREEN_API_INSTANCE_ID")
@@ -19,10 +17,10 @@ def main():
         print("❌ Set GREEN_API_INSTANCE_ID and GREEN_API_TOKEN in .env first")
         sys.exit(1)
 
-    url = f"{GREEN_API_BASE}/waInstance{instance_id}/getChats/{token}"
+    from whatsapp_report import _green_api_url
     print("📥 Fetching chats from Green API...\n")
 
-    resp = requests.get(url)
+    resp = requests.get(_green_api_url("getChats"), timeout=60)
     resp.raise_for_status()
     chats = resp.json()
 
