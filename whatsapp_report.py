@@ -12,7 +12,8 @@ from overdue_report import (
 )
 
 
-RETRIES = 3
+# Seconds to wait between attempts (~33 min total) — Green API has had multi-minute 5xx outages
+RETRY_DELAYS = [60, 120, 300, 600, 900]
 
 
 def _green_api_base():
@@ -34,16 +35,16 @@ def _redact(msg):
 
 
 def _post(method, **kwargs):
-    for attempt in range(1, RETRIES + 1):
+    for attempt, delay in enumerate(RETRY_DELAYS + [None], start=1):
         try:
             resp = requests.post(_green_api_url(method), timeout=(15, 120), **kwargs)
             resp.raise_for_status()
             return resp
         except requests.RequestException as e:
-            if attempt == RETRIES:
+            if delay is None:
                 raise
-            print(f"  ↻ {method} attempt {attempt} failed ({_redact(e)}), retrying in 30s...")
-            time.sleep(30)
+            print(f"  ↻ {method} attempt {attempt} failed ({_redact(e)}), retrying in {delay}s...")
+            time.sleep(delay)
             if "files" in kwargs:
                 for _, f in kwargs["files"].items():
                     f[1].seek(0)
